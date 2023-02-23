@@ -131,19 +131,40 @@ def ChooseCar():
             return (ListCamion[i].matricule)
 
 mapClass = {
-   "personne.txt" : Personne,"voiture.txt" : Voiture,"monospace.txt" : Monospace,"camion.txt":Camion,"utilitaire.txt":Utilitaire,"location.txt":Location
+   "personne.txt" :{
+    "className" : Personne,
+    "varName" : ListPers
+   } ,
+   "voiture.txt" : {
+    "className" :Voiture,
+    "varName" : ListVoiture
+    },
+    "monospace.txt" :{
+       "className" :Monospace,
+        "varName" : ListMonospace 
+    },
+    "camion.txt":{
+        "className" :Monospace,
+        "varName" : ListCamion
+    },
+    "utilitaire.txt":{
+        "className" :Utilitaire,
+        "varName": ListUtilitaire
+    },
+    "location.txt":{
+         "className" :Location,
+        "varName": ListLocation
+    }
 }
-mapClass1 = {
-    "personne.txt" : ListPers,"voiture.txt" : ListVoiture,"monospace.txt" : ListMonospace,"camion.txt":ListCamion,"utilitaire.txt":ListUtilitaire,"location.txt":ListLocation
-}
+
 
 def fileToObject(fileName:str ) :
     f = open(fileName,"r")
     lignes = f.readlines()
     for ligne in (lignes):
         ligne = ligne[0:-1] 
-        instance = mapClass[fileName].load(ligne)
-        mapClass1[fileName].append(instance) 
+        instance = mapClass[fileName]["className"].load(ligne)
+        mapClass[fileName]["varName"].append(instance) 
     f.close()
 
 def existFile(fileName:str):
