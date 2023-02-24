@@ -15,16 +15,6 @@ class Personne(Serialize):
         pers.id = int(pertList[0])
         return pers
         
-    def searchPers(id:str ) :
-        f = open("personne.txt","r")
-        lignes = f.readlines()
-        for ligne in (lignes):
-            ligne = ligne[0:-1]
-            ligne = ligne.split('\t')
-            if ligne[0] == str(id):
-                Pers = Personne(ligne[1],ligne[2],ligne[3])
-                return Pers
-
 
         
     def __str__(self):

@@ -10,6 +10,10 @@ from Serialize import Serialize
 from datetime import datetime
 import os
 
+def displayArray(list) :
+    for i in  range(len(list)):
+        return list[i]
+
 ListPers = []
 def SaisiePers():
     nom = input("Saisissez le nom de la personne : ")
@@ -76,7 +80,7 @@ def SaisieLocation():
     loc = Location(code,client,vehicule)
     ListLocation.append(loc)
     return loc
-
+"""
 def ChoosePers():
     print("ID"+"\t"+"Nom"+"\t"+"Prénom"+"\t"+"Date de naissance"+"\n"+
     "..........................................................")
@@ -86,6 +90,7 @@ def ChoosePers():
     for i in range(len(ListPers)):
         if str(ListPers[i].id) == str(client1) :
             return (str(ListPers[i].id))
+
 
 def ChooseCar():
     print("Les voitures disponibles à la location: "+"\n"+"Marque"+"\t"+"model"+"\t"+"Année"+"\t"+"Matricule"+"\t"+"Kilométrage"+"\t"+"Nbr places"+"\n"+
@@ -129,7 +134,7 @@ def ChooseCar():
     for i in range(len(ListCamion)):
         if str(ListCamion[i].matricule) == str(vehicule1) :
             return (ListCamion[i].matricule)
-
+"""
 mapClass = {
    "personne.txt" :{
     "className" : Personne,
@@ -151,9 +156,9 @@ mapClass = {
         "className" :Utilitaire,
         "varName": ListUtilitaire
     },
-    "location.txt":{
-         "className" :Location,
-        "varName": ListLocation
+    "camion.txt":{
+         "className" :Camion,
+        "varName": ListCamion
     }
 }
 
@@ -167,26 +172,50 @@ def fileToObject(fileName:str ) :
         mapClass[fileName]["varName"].append(instance) 
     f.close()
 
+def searchPers(id) : 
+    for i in range(len(ListPers)):
+        if(ListPers[i].id == int(id)) :
+            return ListPers[i]
+
+
+def searchVehic(matricule) : 
+    listVehicule = ListVoiture+ListCamion+ListMonospace+ListUtilitaire
+    for i in range(len(listVehicule)):
+        if(listVehicule[i].matricule == matricule ) :
+            return listVehicule[i]
+
+def loadLocation() :
+    f = open("location.txt","r")
+    lignes = f.readlines()
+    print(lignes)
+    for ligne in (lignes):
+        ligne = ligne[0:-1]
+        locList = ligne.split('\t')
+        ListLocation.append(Location(locList[0],searchPers(locList[1]),searchVehic(locList[2])))
+    f.close()
+
 def existFile(fileName:str):
     try:
-        f = open(fileName,"r")
+        os.path.exists(fileName)
         fileToObject(fileName)
-    except :
-        f = open(fileName,"x")
-        f.close()
+    except:
+        pass 
+    
 
 existFile("personne.txt")
 existFile("voiture.txt")
 existFile("monospace.txt")
 existFile("utilitaire.txt")
 existFile("camion.txt")
+existFile("location.txt")
+loadLocation()
 
-os.remove("personne.txt")
-os.remove("voiture.txt")
-os.remove("monospace.txt")
-os.remove("utilitaire.txt")
-os.remove("camion.txt")
-
+#os.remove("personne.txt")
+#os.remove("voiture.txt")
+#os.remove("monospace.txt")
+#os.remove("utilitaire.txt")
+#os.remove("camion.txt")
+"""
 def CheckLocation():
     return not(len(ListPers) == 0 or len(ListVoiture) == 0 and len(ListUtilitaire) == 0 and len(ListCamion) == 0 and len(ListMonospace) == 0)
 
@@ -200,10 +229,16 @@ def displayMsg():
 
 
 def save(fileName :str, lst: list[Serialize]):
-    f = open(fileName,"a",encoding='utf-8')
-    for i in range(len(lst)):
-        f.write(lst[i].stringify())
-    f.close()           
+    if fileName == "location.txt":
+        f = open(fileName,"a",encoding='utf-8')
+        for i in range(len(lst)):
+            f.write(lst[i].stringify())
+        f.close()
+    else:
+        f = open(fileName,"w",encoding='utf-8')
+        for i in range(len(lst)):
+            f.write(lst[i].stringify())
+        f.close()           
 
 print("Bienvenue au menu d'enregistrement de l'agence  :")
 
@@ -236,19 +271,17 @@ while True:
         SaisieCamion()
     if x == "F" :
         SaisieLocation()
+"""
 
-def displayArray(list) :
-    for i in  range(len(list)):
-        return list[i]
 
-CheckLocation()
+#CheckLocation()
 
 #displayArray(ListPers)
 #displayArray(ListVoiture)
 #displayArray(ListUtilitaire)
 #displayArray(ListMonospace)
 #displayArray(ListCamion)
-#displayArray(ListLocation)
+print(displayArray(ListLocation))
 
 
 

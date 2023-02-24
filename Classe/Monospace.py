@@ -14,6 +14,7 @@ class Monospace (Vehicule):
         monospaceList = monospaceStr.split("\t")
         mono = Vehicule.load(monospaceStr)
         return Monospace(mono.nom,mono.model,mono.annee,mono.matricule,mono.km,monospaceList[5])
+    
 
 if __name__ == '__main__':
     V = Monospace("Peugeot","5008","2018","A145HINO","230000",7)

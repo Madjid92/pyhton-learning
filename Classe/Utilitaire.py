@@ -13,6 +13,7 @@ class Utilitaire (Vehicule):
         utilitaireList = utilitaireStr.split("\t")
         util = Vehicule.load(utilitaireStr)
         return Utilitaire(util.nom,util.model,util.annee,util.matricule,util.km,utilitaireList[5])
+    
 
 if __name__ == '__main__':
     U = Utilitaire("Mercedes-Benz","Sprinter","2019","MB10RDXQ7","210000",17)

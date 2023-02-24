@@ -1,5 +1,6 @@
 from Serialize import Serialize
 
+
 class Vehicule(Serialize):
     def __init__(self, nom, model, annee, matricule, km):
         self.nom = nom
@@ -17,16 +18,7 @@ class Vehicule(Serialize):
             vehiculetList = vehiculeStr.split('\t')
             vehic = Vehicule(vehiculetList[0],vehiculetList[1],vehiculetList[2],vehiculetList[3],vehiculetList[4])
             return vehic
-    
-    def searchVehic(matricule:str) :
-        f = open("utilitaire.txt","r")
-        lignes = f.readlines()
-        for ligne in (lignes):
-            ligne = ligne[0:-1]
-            ligne = ligne.split('\t')
-            if ligne[3] == str(matricule):
-                Vehic = Vehicule(ligne[0],ligne[1],ligne[2],ligne[3],ligne[4])
-                return Vehic
+
 
 
 
