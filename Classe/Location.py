@@ -13,7 +13,7 @@ class Location(Serialize):
         return ("Code location: "+self.code + "\n" +str(self.client)+ "\n" + str(self.vehicule)) 
 
     def stringify(self):
-        return (self.code + "\t" +str(self.client)+ "\t" + str(self.vehicule)+"\n")
+        return (self.code + "\t" +(str(self.client.id))+ "\t" + str(self.vehicule.matricule)+"\n")
 
 
 """

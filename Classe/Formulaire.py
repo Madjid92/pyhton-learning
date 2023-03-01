@@ -10,20 +10,22 @@ from Serialize import Serialize
 from datetime import datetime
 import os
 
-def displayArray(list) :
-    for i in  range(len(list)):
-        return list[i]
+savedFilesDirName = "./savedFiles/"
 
-ListPers = []
+def displayArray(map:dict) :
+    for i in  map:
+        print(map[i])
+
+mapIdPers = {}
 def SaisiePers():
     nom = input("Saisissez le nom de la personne : ")
     prenom = input("Saisissez le prénom de la personne : ")
     naissance = input("Saisissez la date de naissance de la personne : ")
     pers = Personne(nom,prenom,naissance)
-    ListPers.append(pers)
+    mapIdPers[pers.id]=pers
     return pers
 
-ListVoiture = []
+mapIdVoit = {}
 def SaisieVoiture():
     nom = input("Saisissez le nom de la voiture: ")
     model = input("Saisissez le model de la voiture: ")
@@ -32,10 +34,10 @@ def SaisieVoiture():
     km = input("Saisissez le kilométrage de la voiture: ")
     nbrplace = input("Saisissez le nombre de places de la voiture: ")
     voit = Voiture(nom,model,annee,matricule,km,nbrplace)
-    ListVoiture.append(voit)
+    mapIdVoit[voit.matricule] = voit
     return voit
 
-ListUtilitaire = []
+mapIdUtil = {}
 def SaisieUtilitaire():
     nom = input("Saisissez le nom de l'utilitaire: ")
     model = input("Saisissez le model de l'utilitaire: ")
@@ -44,10 +46,10 @@ def SaisieUtilitaire():
     km = input("Saisissez le kilométrage de l'utilitaire: ")
     volume = input("Saisissez le volume de l'utilitaire: ")
     util = Utilitaire(nom,model,annee,matricule,km,volume)
-    ListUtilitaire.append(util)
+    mapIdUtil[util.matricule] = util
     return util
 
-ListMonospace = []
+mapIdMono = {}
 def SaisieMonospace():
     nom = input("Saisissez le nom du monospace: ")
     model = input("Saisissez le model du monospace: ")
@@ -56,10 +58,10 @@ def SaisieMonospace():
     km = input("Saisissez le kilométrage du monospace: ")
     nbrplace = input("Saisissez le nombre de places du monospace: ")
     space = Monospace(nom,model,annee,matricule,km,nbrplace)
-    ListMonospace.append(space)
+    mapIdMono[space.matricule] = space
     return space
     
-ListCamion = []
+mapIdCam = {}
 def SaisieCamion():
     nom = input("Saisissez le nom du camion: ")
     model = input("Saisissez le model du camion: ")
@@ -68,135 +70,118 @@ def SaisieCamion():
     km = input("Saisissez le kilométrage du camion: ")
     tonnage = input("Saisissez le tonnage du camion: ")
     truck = Camion(nom,model,annee,matricule,km,tonnage)
-    ListCamion.append(truck)
+    mapIdCam[truck.matricule] = truck
     return truck
 
-
-ListLocation = []
+mapIdLoc = {}
 def SaisieLocation():
     code = input("Saisissez le code de la location: ")
     client = ChoosePers()
     vehicule = ChooseCar()
     loc = Location(code,client,vehicule)
-    ListLocation.append(loc)
+    mapIdLoc[loc.code] = loc
     return loc
-"""
+
+
 def ChoosePers():
     print("ID"+"\t"+"Nom"+"\t"+"Prénom"+"\t"+"Date de naissance"+"\n"+
     "..........................................................")
-    for i in range(len(ListPers)):
-        print(str(ListPers[i].id)+"\t"+ListPers[i].nom+"\t"+ListPers[i].prenom+"\t"+str(ListPers[i].naissance))
+    for i in mapIdPers:
+        print(str(mapIdPers[i].id)+"\t"+mapIdPers[i].nom+"\t"+mapIdPers[i].prenom+"\t"+str(mapIdPers[i].naissance))
     client1 = input("Veuillez séléctionner l'ID du client: ")
-    for i in range(len(ListPers)):
-        if str(ListPers[i].id) == str(client1) :
-            return (str(ListPers[i].id))
+    return mapIdPers[str(client1)]
 
 
 def ChooseCar():
+    mapIdVehic = { **mapIdVoit, **mapIdMono, **mapIdUtil, **mapIdCam}
     print("Les voitures disponibles à la location: "+"\n"+"Marque"+"\t"+"model"+"\t"+"Année"+"\t"+"Matricule"+"\t"+"Kilométrage"+"\t"+"Nbr places"+"\n"+
     "..............................................................................................")
-    for i in range(len(ListVoiture)):
-        print(ListVoiture[i].nom+"\t"+ListVoiture[i].model+"\t"+str(ListVoiture[i].annee)+"\t"+ListVoiture[i].matricule+"\t"+
-        str(ListVoiture[i].km)+"\t"+str(ListVoiture[i].nbrplace))
+    for i in mapIdVoit:
+        print(mapIdVoit[i].nom+"\t"+mapIdVoit[i].model+"\t"+str(mapIdVoit[i].annee)+"\t"+mapIdVoit[i].matricule+"\t"+
+        str(mapIdVoit[i].km)+"\t"+str(mapIdVoit[i].nbrplace))
     
     print("Les monospaces disponibles à la location: "+"\n"+"Marque"+"\t"+"model"+"\t"+"Année"+"\t"+"Matricule"+"\t"+"Kilométrage"+"\t"+"Nbr places"+"\n"+
     "..............................................................................................")
-    for i in range(len(ListMonospace)):
-        print(ListMonospace[i].nom+"\t"+ListMonospace[i].model+"\t"+str(ListMonospace[i].annee)+"\t"+ListMonospace[i].matricule+"\t"+
-        str(ListMonospace[i].km)+"\t"+str(ListMonospace[i].nbrplace))
+    for i in mapIdMono:
+        print(mapIdMono[i].nom+"\t"+mapIdMono[i].model+"\t"+str(mapIdMono[i].annee)+"\t"+mapIdMono[i].matricule+"\t"+
+        str(mapIdMono[i].km)+"\t"+str(mapIdMono[i].nbrplace))
     
     print("Les utilitaires disponibles à la location: "+"\n"+"Marque"+"\t"+"model"+"\t"+"Année"+"\t"+"Matricule"+"\t"+"Kilométrage"+"\t"+"Volume"+"\n"+
     "..............................................................................................")
-    for i in range(len(ListUtilitaire)):
-        print(ListUtilitaire[i].nom+"\t"+ListUtilitaire[i].model+"\t"+str(ListUtilitaire[i].annee)+"\t"+ListUtilitaire[i].matricule+"\t"+
-        str(ListUtilitaire[i].km)+"\t"+str(ListUtilitaire[i].volume))
+    for i in mapIdUtil:
+        print(mapIdUtil[i].nom+"\t"+mapIdUtil[i].model+"\t"+str(mapIdUtil[i].annee)+"\t"+mapIdUtil[i].matricule+"\t"+
+        str(mapIdUtil[i].km)+"\t"+str(mapIdUtil[i].volume))
     
     print("Les camions disponibles à la location: "+"\n"+"Marque"+"\t"+"model"+"\t"+"Année"+"\t"+"Matricule"+"\t"+"Kilométrage"+"\t"+"Tonnage"+"\n"+
     "..............................................................................................")
-    for i in range(len(ListCamion)):
-        print(ListCamion[i].nom+"\t"+ListCamion[i].model+"\t"+str(ListCamion[i].annee)+"\t"+ListCamion[i].matricule+"\t"+
-        str(ListCamion[i].km)+"\t"+str(ListCamion[i].tonnage))
+    for i in mapIdCam:
+        print(mapIdCam[i].nom+"\t"+mapIdCam[i].model+"\t"+str(mapIdCam[i].annee)+"\t"+mapIdCam[i].matricule+"\t"+
+        str(mapIdCam[i].km)+"\t"+str(mapIdCam[i].tonnage))
 
     vehicule1 = input("Veuillez saisir le matricule du véhicule: ")
-
-    for i in range(len(ListVoiture)):
-        if str(ListVoiture[i].matricule) == str(vehicule1) :
-            return (ListVoiture[i].matricule)
     
-    for i in range(len(ListMonospace)):
-        if str(ListMonospace[i].matricule) == str(vehicule1) :
-            return (ListMonospace[i].matricule)
-    
-    for i in range(len(ListUtilitaire)):
-        if str(ListUtilitaire[i].matricule) == str(vehicule1) :
-            return (ListUtilitaire[i].matricule)
+    return mapIdVehic[vehicule1]
 
-    for i in range(len(ListCamion)):
-        if str(ListCamion[i].matricule) == str(vehicule1) :
-            return (ListCamion[i].matricule)
-"""
+
 mapClass = {
    "personne.txt" :{
-    "className" : Personne,
-    "varName" : ListPers
-   } ,
-   "voiture.txt" : {
-    "className" :Voiture,
-    "varName" : ListVoiture
+    "className" : Personne
+    },
+   "voiture.txt" :{
+    "className" :Voiture
     },
     "monospace.txt" :{
-       "className" :Monospace,
-        "varName" : ListMonospace 
+    "className" :Monospace
+    },
+    "utilitaire.txt" :{
+    "className" :Utilitaire
     },
     "camion.txt":{
-        "className" :Monospace,
-        "varName" : ListCamion
-    },
-    "utilitaire.txt":{
-        "className" :Utilitaire,
-        "varName": ListUtilitaire
-    },
-    "camion.txt":{
-         "className" :Camion,
-        "varName": ListCamion
+    "className" :Camion
     }
 }
 
 
 def fileToObject(fileName:str ) :
-    f = open(fileName,"r")
+    f = open(savedFilesDirName+fileName,"r")
     lignes = f.readlines()
     for ligne in (lignes):
         ligne = ligne[0:-1] 
         instance = mapClass[fileName]["className"].load(ligne)
-        mapClass[fileName]["varName"].append(instance) 
+        if type(instance) == Personne:
+            mapIdPers[str(instance.id)] = instance
+        if type(instance) == Voiture:
+            mapIdVoit[instance.matricule] = instance
+        if type(instance) == Utilitaire:
+            mapIdUtil[instance.matricule] = instance
+        if type(instance) == Monospace:
+            mapIdMono[instance.matricule] = instance
+        if type(instance) == Camion:
+            mapIdCam[instance.matricule] = instance
     f.close()
 
-def searchPers(id) : 
-    for i in range(len(ListPers)):
-        if(ListPers[i].id == int(id)) :
-            return ListPers[i]
-
-
-def searchVehic(matricule) : 
-    listVehicule = ListVoiture+ListCamion+ListMonospace+ListUtilitaire
-    for i in range(len(listVehicule)):
-        if(listVehicule[i].matricule == matricule ) :
-            return listVehicule[i]
 
 def loadLocation() :
-    f = open("location.txt","r")
-    lignes = f.readlines()
-    print(lignes)
-    for ligne in (lignes):
-        ligne = ligne[0:-1]
-        locList = ligne.split('\t')
-        ListLocation.append(Location(locList[0],searchPers(locList[1]),searchVehic(locList[2])))
-    f.close()
+    mapIdVehic = { **mapIdVoit, **mapIdMono, **mapIdUtil, **mapIdCam}
+    try:
+        os.path.exists(savedFilesDirName+"location.txt")
+        f = open(savedFilesDirName+"location.txt","r")
+        lignes = f.readlines()
+        for ligne in (lignes):
+            ligne = ligne[0:-1]
+            locList = ligne.split('\t')
+            pers = mapIdPers[str(locList[1])]
+            vehi = mapIdVehic[locList[2]]
+            loc = Location(locList[0],pers,vehi)
+            mapIdLoc[loc.code] = loc
+        f.close()
+    except:
+        pass 
+
 
 def existFile(fileName:str):
     try:
-        os.path.exists(fileName)
+        os.path.exists(savedFilesDirName+fileName)
         fileToObject(fileName)
     except:
         pass 
@@ -207,37 +192,34 @@ existFile("voiture.txt")
 existFile("monospace.txt")
 existFile("utilitaire.txt")
 existFile("camion.txt")
-existFile("location.txt")
+
 loadLocation()
 
-#os.remove("personne.txt")
-#os.remove("voiture.txt")
-#os.remove("monospace.txt")
-#os.remove("utilitaire.txt")
-#os.remove("camion.txt")
-"""
-def CheckLocation():
-    return not(len(ListPers) == 0 or len(ListVoiture) == 0 and len(ListUtilitaire) == 0 and len(ListCamion) == 0 and len(ListMonospace) == 0)
 
+def checkLoc():
+    mapIdVehic = { **mapIdVoit, **mapIdMono, **mapIdUtil, **mapIdCam}
+    if len(mapIdPers)!=0 and len(mapIdVehic)!=0:
+        return True
 
+    
 def displayMsg():
     print("Saisissez A pour ajouter un client."+"\n"+"Saisissez B pour ajouter une voiture."+"\n"+
             "Saisissez C pour ajouter un monospace."+"\n"+"Saisissez D pour ajouter un utilitaire."+"\n"+
             "Saisissez E pour ajouter un camion.")
-    if CheckLocation():
+    if checkLoc():
         print("Saisissez F pour ajouter une location.")
 
 
-def save(fileName :str, lst: list[Serialize]):
+def save(fileName :str, map:dict):
     if fileName == "location.txt":
-        f = open(fileName,"a",encoding='utf-8')
-        for i in range(len(lst)):
-            f.write(lst[i].stringify())
+        f = open(savedFilesDirName+fileName,"a",encoding='utf-8')
+        for i in map:
+            f.write(map[i].stringify())
         f.close()
     else:
-        f = open(fileName,"w",encoding='utf-8')
-        for i in range(len(lst)):
-            f.write(lst[i].stringify())
+        f = open(savedFilesDirName+fileName,"w",encoding='utf-8')
+        for i in map:
+            f.write(map[i].stringify())
         f.close()           
 
 print("Bienvenue au menu d'enregistrement de l'agence  :")
@@ -246,17 +228,17 @@ while True:
     displayMsg()
     x = input("Veuillez faire votre saisie, ou ok pour quitter: ")
     if x == "ok":
-        save("personne.txt",ListPers)
-        save("voiture.txt",ListVoiture)
-        save("utilitaire.txt",ListUtilitaire)
-        save("monospace.txt",ListMonospace)
-        save("camion.txt",ListCamion)
-        save("location.txt",ListLocation)
+        save("personne.txt",mapIdPers)
+        save("voiture.txt",mapIdVoit)
+        save("utilitaire.txt",mapIdUtil)
+        save("monospace.txt",mapIdMono)
+        save("camion.txt",mapIdCam)
+        save("location.txt",mapIdLoc)
         break
     if x != "A" and x != "B" and x != "C" and x != "D" and x != "E" and  x != "F":
         print("Votre choix n'est pas sur la liste !")
         continue
-    if x == "F" and not CheckLocation() : 
+    if x == "F" and not checkLoc() : 
         print("Votre choix n'est pas sur la liste !")
         continue
     if x == "A":
@@ -271,18 +253,14 @@ while True:
         SaisieCamion()
     if x == "F" :
         SaisieLocation()
-"""
 
-
-#CheckLocation()
-
-#displayArray(ListPers)
-#displayArray(ListVoiture)
-#displayArray(ListUtilitaire)
-#displayArray(ListMonospace)
-#displayArray(ListCamion)
-print(displayArray(ListLocation))
-
+#displayArray(mapIdPers)
+#displayArray(mapIdVoit)
+#displayArray(mapIdUtil)
+#displayArray(mapIdMono)
+#displayArray(mapIdCam)
+#displayArray(mapIdLoc)
+#displayArray(mapIdVehic)
 
 
 
