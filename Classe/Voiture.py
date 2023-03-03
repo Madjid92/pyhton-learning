@@ -2,6 +2,7 @@ from Vehicule import Vehicule
 from Serialize import Serialize
 
 class Voiture (Vehicule):
+    name="voiture"
     def __init__(self, nom, model, annee, matricule, km, nbrplace):
         self.nbrplace = nbrplace
         super().__init__(nom, model, annee, matricule, km)

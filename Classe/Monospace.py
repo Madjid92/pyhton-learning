@@ -2,6 +2,7 @@ from Vehicule import Vehicule
 
 
 class Monospace (Vehicule):
+    name = "monospace"
     def __init__(self, nom, model, annee, matricule, km, nbrplace):
         self.nbrplace = nbrplace
         super().__init__(nom, model, annee, matricule, km)

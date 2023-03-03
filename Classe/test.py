@@ -21,4 +21,5 @@ cur.execute("SELECT * FROM public.voiture")
 #   print(records[i])
 from Personne import Personne
 per = Personne('test', 'test', '11-11-2020')
-print(getattr(per, 'id'))
+
+print(list({'A': 'B'}.keys()))

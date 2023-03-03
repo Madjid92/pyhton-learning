@@ -1,4 +1,6 @@
 class Serialize:
+    name :str = None
+
     def stringify(self):
         pass
 

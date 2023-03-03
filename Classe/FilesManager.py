@@ -121,13 +121,14 @@ class FileManager(DataManager) :
     
 
     def saveAll():
-        FileManager.saveOnFile("personne.txt",FileManager.mapIdPers)
-        FileManager.saveOnFile("voiture.txt",FileManager.mapIdVoit)
-        FileManager.saveOnFile("utilitaire.txt",FileManager.mapIdUtil)
-        FileManager.saveOnFile("monospace.txt",FileManager.mapIdMono)
-        FileManager.saveOnFile("camion.txt",FileManager.mapIdCam)
-        FileManager.saveOnFile("location.txt",FileManager.mapIdLoc)
-
+        classes = list(FileManager.typetoMap.keys())
+        for i in range(len(classes)) :
+            currentClass= classes[i]
+            currentDataMap = FileManager.typetoMap[currentClass]
+            if(len(currentDataMap) == 0) :
+                continue
+            FileManager.saveOnFile(currentClass.name+".txt",currentDataMap)
+    
     def save(data):
         typeData = type(data) 
         idattrName = 'id' if typeData == Personne else 'code' if typeData == Location else 'matricule'

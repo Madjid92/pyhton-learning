@@ -5,6 +5,7 @@ import datetime
 
 
 class Location(Serialize):
+    name = "location"
     def __init__(self, code, client: Personne, vehicule: Vehicule):
         self.code = code
         self.client = client

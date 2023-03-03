@@ -2,6 +2,7 @@ from datetime import datetime
 from Serialize import Serialize
 class Personne(Serialize):
     count = 0
+    name = "personne"
     def __init__(self, nom : str, prenom :str, naissance : str):
         Personne.count = Personne.count+1
         self.id = Personne.count
