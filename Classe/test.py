@@ -19,3 +19,6 @@ cur.execute("SELECT * FROM public.voiture")
 
 #for i in range(len(records)) :
 #   print(records[i])
+from Personne import Personne
+per = Personne('test', 'test', '11-11-2020')
+print(getattr(per, 'id'))

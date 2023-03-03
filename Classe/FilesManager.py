@@ -5,11 +5,12 @@ from Utilitaire import Utilitaire
 from Monospace import Monospace
 from Camion import Camion
 from Location import Location
+from DataManger import DataManager
 import os
 
 savedFilesDirName = "./savedFiles/"
 
-class FileManager :
+class FileManager(DataManager) :
     
     mapClass = {
         "personne.txt" :{
@@ -29,6 +30,8 @@ class FileManager :
             }
         }
 
+
+    
     mapIdPers = {}
     mapIdVoit = {}
     mapIdUtil = {}
@@ -36,6 +39,14 @@ class FileManager :
     mapIdCam = {}
     mapIdLoc = {}
 
+    typetoMap = {
+        Personne : mapIdPers,
+        Voiture : mapIdVoit,
+        Utilitaire : mapIdUtil,
+        Camion : mapIdCam,
+        Monospace : mapIdMono,
+        Location : mapIdLoc
+    } 
 
     def fileToObject(fileName:str ) :
         f = open(savedFilesDirName+fileName,"r")
@@ -79,7 +90,7 @@ class FileManager :
         except:
             pass 
 
-    def save(fileName :str, map:dict):
+    def saveOnFile(fileName :str, map:dict):
         if fileName == "location.txt":
             f = open(savedFilesDirName+fileName,"a",encoding='utf-8')
             for i in map:
@@ -96,7 +107,7 @@ class FileManager :
         if len(FileManager.mapIdPers)!=0 and len(mapIdVehic)!=0:
             return True
 
-    def loadAllFiles() :
+    def getAll() :
         FileManager.existFile("personne.txt")
         FileManager.existFile("voiture.txt")
         FileManager.existFile("monospace.txt")
@@ -105,12 +116,20 @@ class FileManager :
 
         FileManager.loadLocation()
 
-    def saveAllFiles():
-        FileManager.save("personne.txt",FileManager.mapIdPers)
-        FileManager.save("voiture.txt",FileManager.mapIdVoit)
-        FileManager.save("utilitaire.txt",FileManager.mapIdUtil)
-        FileManager.save("monospace.txt",FileManager.mapIdMono)
-        FileManager.save("camion.txt",FileManager.mapIdCam)
-        FileManager.save("location.txt",FileManager.mapIdLoc)
+    def saveAll():
+        FileManager.saveOnFile("personne.txt",FileManager.mapIdPers)
+        FileManager.saveOnFile("voiture.txt",FileManager.mapIdVoit)
+        FileManager.saveOnFile("utilitaire.txt",FileManager.mapIdUtil)
+        FileManager.saveOnFile("monospace.txt",FileManager.mapIdMono)
+        FileManager.saveOnFile("camion.txt",FileManager.mapIdCam)
+        FileManager.saveOnFile("location.txt",FileManager.mapIdLoc)
+
+    def save(data):
+        typeData = type(data) 
+        idattrName = 'id' if typeData == Personne else 'code' if typeData == Location else 'matricule'
+        idVal = getattr(data, idattrName)
+        dataMap = FileManager.typetoMap[typeData]
+        dataMap[idVal] = data
+        
         
 

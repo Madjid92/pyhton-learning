@@ -115,12 +115,27 @@ def displayMsg():
 
 print("Bienvenue au menu d'enregistrement de l'agence  :")
 
+
+def Saiasie( x) :
+    if x == "A": 
+       return SaisiePers()
+    if x == "B":
+        return SaisieVoiture()
+    if x == "C":
+        return SaisieMonospace()
+    if x == "D":
+        return SaisieUtilitaire()
+    if x == "E":
+        return SaisieCamion()
+    if x == "F" :
+        return SaisieLocation(FileManager.mapIdPers, FileManager.mapIdVoit, FileManager.mapIdMono, FileManager.mapIdUtil, FileManager.mapIdCam )
+    
 while True:
-    FileManager.loadAllFiles()
+    FileManager.getAll()
     displayMsg()
     x = input("Veuillez faire votre saisie, ou ok pour quitter: ")
     if x == "ok":
-        FileManager.saveAllFiles()
+        FileManager.saveAll()
         break
     if x != "A" and x != "B" and x != "C" and x != "D" and x != "E" and  x != "F":
         print("Votre choix n'est pas sur la liste !")
@@ -128,28 +143,9 @@ while True:
     if x == "F" and not FileManager.checkLoc() : 
         print("Votre choix n'est pas sur la liste !")
         continue
-    if x == "A": 
-        pers = SaisiePers()
-        FileManager.mapIdPers[pers.id] = pers
-    if x == "B":
-        voit = SaisieVoiture()
-        FileManager.mapIdVoit[voit.matricule] = voit
-       
-    if x == "C":
-        mono = SaisieMonospace()
-        FileManager.mapIdMono[mono.matricule] = mono
-
-    if x == "D":
-        util = SaisieUtilitaire()
-        FileManager.mapIdUtil[util.matricule] = util
-
-    if x == "E":
-        truck = SaisieCamion()
-        FileManager.mapIdCam[truck.matricule] = truck
-
-    if x == "F" :
-        loc = SaisieLocation(FileManager.mapIdPers, FileManager.mapIdVoit, FileManager.mapIdMono, FileManager.mapIdUtil, FileManager.mapIdCam )
-        FileManager.mapIdLoc[loc.code] = loc
+    data = Saiasie(x)
+    FileManager.save(data)
+    
 
 #displayArray(mapIdPers)
 #displayArray(mapIdVoit)
