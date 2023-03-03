@@ -9,23 +9,19 @@ import datetime
 from Serialize import Serialize
 from datetime import datetime
 import os
+from FilesManager import FileManager
 
-savedFilesDirName = "./savedFiles/"
 
 def displayArray(map:dict) :
     for i in  map:
         print(map[i])
 
-mapIdPers = {}
 def SaisiePers():
     nom = input("Saisissez le nom de la personne : ")
     prenom = input("Saisissez le prénom de la personne : ")
     naissance = input("Saisissez la date de naissance de la personne : ")
-    pers = Personne(nom,prenom,naissance)
-    mapIdPers[pers.id]=pers
-    return pers
+    return Personne(nom,prenom,naissance)
 
-mapIdVoit = {}
 def SaisieVoiture():
     nom = input("Saisissez le nom de la voiture: ")
     model = input("Saisissez le model de la voiture: ")
@@ -33,11 +29,8 @@ def SaisieVoiture():
     matricule = input("Saisissez le matricule de la voiture: ")
     km = input("Saisissez le kilométrage de la voiture: ")
     nbrplace = input("Saisissez le nombre de places de la voiture: ")
-    voit = Voiture(nom,model,annee,matricule,km,nbrplace)
-    mapIdVoit[voit.matricule] = voit
-    return voit
+    return Voiture(nom,model,annee,matricule,km,nbrplace)
 
-mapIdUtil = {}
 def SaisieUtilitaire():
     nom = input("Saisissez le nom de l'utilitaire: ")
     model = input("Saisissez le model de l'utilitaire: ")
@@ -46,10 +39,8 @@ def SaisieUtilitaire():
     km = input("Saisissez le kilométrage de l'utilitaire: ")
     volume = input("Saisissez le volume de l'utilitaire: ")
     util = Utilitaire(nom,model,annee,matricule,km,volume)
-    mapIdUtil[util.matricule] = util
     return util
 
-mapIdMono = {}
 def SaisieMonospace():
     nom = input("Saisissez le nom du monospace: ")
     model = input("Saisissez le model du monospace: ")
@@ -57,11 +48,9 @@ def SaisieMonospace():
     matricule = input("Saisissez le matricule du monospace: ")
     km = input("Saisissez le kilométrage du monospace: ")
     nbrplace = input("Saisissez le nombre de places du monospace: ")
-    space = Monospace(nom,model,annee,matricule,km,nbrplace)
-    mapIdMono[space.matricule] = space
-    return space
+    mono = Monospace(nom,model,annee,matricule,km,nbrplace)
+    return mono
     
-mapIdCam = {}
 def SaisieCamion():
     nom = input("Saisissez le nom du camion: ")
     model = input("Saisissez le model du camion: ")
@@ -70,20 +59,16 @@ def SaisieCamion():
     km = input("Saisissez le kilométrage du camion: ")
     tonnage = input("Saisissez le tonnage du camion: ")
     truck = Camion(nom,model,annee,matricule,km,tonnage)
-    mapIdCam[truck.matricule] = truck
     return truck
 
-mapIdLoc = {}
-def SaisieLocation():
+def SaisieLocation(mapIdPers, mapIdVoit, mapIdMono, mapIdUtil, mapIdCam ):
     code = input("Saisissez le code de la location: ")
-    client = ChoosePers()
-    vehicule = ChooseCar()
+    client = ChoosePers(mapIdPers)
+    vehicule = ChooseCar(mapIdVoit, mapIdMono, mapIdUtil, mapIdCam )
     loc = Location(code,client,vehicule)
-    mapIdLoc[loc.code] = loc
     return loc
 
-
-def ChoosePers():
+def ChoosePers(mapIdPers):
     print("ID"+"\t"+"Nom"+"\t"+"Prénom"+"\t"+"Date de naissance"+"\n"+
     "..........................................................")
     for i in mapIdPers:
@@ -91,8 +76,7 @@ def ChoosePers():
     client1 = input("Veuillez séléctionner l'ID du client: ")
     return mapIdPers[str(client1)]
 
-
-def ChooseCar():
+def ChooseCar(mapIdVoit, mapIdMono, mapIdUtil, mapIdCam):
     mapIdVehic = { **mapIdVoit, **mapIdMono, **mapIdUtil, **mapIdCam}
     print("Les voitures disponibles à la location: "+"\n"+"Marque"+"\t"+"model"+"\t"+"Année"+"\t"+"Matricule"+"\t"+"Kilométrage"+"\t"+"Nbr places"+"\n"+
     "..............................................................................................")
@@ -122,137 +106,50 @@ def ChooseCar():
     
     return mapIdVehic[vehicule1]
 
-
-mapClass = {
-   "personne.txt" :{
-    "className" : Personne
-    },
-   "voiture.txt" :{
-    "className" :Voiture
-    },
-    "monospace.txt" :{
-    "className" :Monospace
-    },
-    "utilitaire.txt" :{
-    "className" :Utilitaire
-    },
-    "camion.txt":{
-    "className" :Camion
-    }
-}
-
-
-def fileToObject(fileName:str ) :
-    f = open(savedFilesDirName+fileName,"r")
-    lignes = f.readlines()
-    for ligne in (lignes):
-        ligne = ligne[0:-1] 
-        instance = mapClass[fileName]["className"].load(ligne)
-        if type(instance) == Personne:
-            mapIdPers[str(instance.id)] = instance
-        if type(instance) == Voiture:
-            mapIdVoit[instance.matricule] = instance
-        if type(instance) == Utilitaire:
-            mapIdUtil[instance.matricule] = instance
-        if type(instance) == Monospace:
-            mapIdMono[instance.matricule] = instance
-        if type(instance) == Camion:
-            mapIdCam[instance.matricule] = instance
-    f.close()
-
-
-def loadLocation() :
-    mapIdVehic = { **mapIdVoit, **mapIdMono, **mapIdUtil, **mapIdCam}
-    try:
-        os.path.exists(savedFilesDirName+"location.txt")
-        f = open(savedFilesDirName+"location.txt","r")
-        lignes = f.readlines()
-        for ligne in (lignes):
-            ligne = ligne[0:-1]
-            locList = ligne.split('\t')
-            pers = mapIdPers[str(locList[1])]
-            vehi = mapIdVehic[locList[2]]
-            loc = Location(locList[0],pers,vehi)
-            mapIdLoc[loc.code] = loc
-        f.close()
-    except:
-        pass 
-
-
-def existFile(fileName:str):
-    try:
-        os.path.exists(savedFilesDirName+fileName)
-        fileToObject(fileName)
-    except:
-        pass 
-    
-
-existFile("personne.txt")
-existFile("voiture.txt")
-existFile("monospace.txt")
-existFile("utilitaire.txt")
-existFile("camion.txt")
-
-loadLocation()
-
-
-def checkLoc():
-    mapIdVehic = { **mapIdVoit, **mapIdMono, **mapIdUtil, **mapIdCam}
-    if len(mapIdPers)!=0 and len(mapIdVehic)!=0:
-        return True
-
-    
 def displayMsg():
     print("Saisissez A pour ajouter un client."+"\n"+"Saisissez B pour ajouter une voiture."+"\n"+
             "Saisissez C pour ajouter un monospace."+"\n"+"Saisissez D pour ajouter un utilitaire."+"\n"+
             "Saisissez E pour ajouter un camion.")
-    if checkLoc():
-        print("Saisissez F pour ajouter une location.")
-
-
-def save(fileName :str, map:dict):
-    if fileName == "location.txt":
-        f = open(savedFilesDirName+fileName,"a",encoding='utf-8')
-        for i in map:
-            f.write(map[i].stringify())
-        f.close()
-    else:
-        f = open(savedFilesDirName+fileName,"w",encoding='utf-8')
-        for i in map:
-            f.write(map[i].stringify())
-        f.close()           
+    if  FileManager.checkLoc():
+        print("Saisissez F pour ajouter une location.")       
 
 print("Bienvenue au menu d'enregistrement de l'agence  :")
 
 while True:
+    FileManager.loadAllFiles()
     displayMsg()
     x = input("Veuillez faire votre saisie, ou ok pour quitter: ")
     if x == "ok":
-        save("personne.txt",mapIdPers)
-        save("voiture.txt",mapIdVoit)
-        save("utilitaire.txt",mapIdUtil)
-        save("monospace.txt",mapIdMono)
-        save("camion.txt",mapIdCam)
-        save("location.txt",mapIdLoc)
+        FileManager.saveAllFiles()
         break
     if x != "A" and x != "B" and x != "C" and x != "D" and x != "E" and  x != "F":
         print("Votre choix n'est pas sur la liste !")
         continue
-    if x == "F" and not checkLoc() : 
+    if x == "F" and not FileManager.checkLoc() : 
         print("Votre choix n'est pas sur la liste !")
         continue
-    if x == "A":
-        SaisiePers()
+    if x == "A": 
+        pers = SaisiePers()
+        FileManager.mapIdPers[pers.id] = pers
     if x == "B":
-        SaisieVoiture()
+        voit = SaisieVoiture()
+        FileManager.mapIdVoit[voit.matricule] = voit
+       
     if x == "C":
-        SaisieMonospace()
+        mono = SaisieMonospace()
+        FileManager.mapIdMono[mono.matricule] = mono
+
     if x == "D":
-        SaisieUtilitaire()
+        util = SaisieUtilitaire()
+        FileManager.mapIdUtil[util.matricule] = util
+
     if x == "E":
-        SaisieCamion()
+        truck = SaisieCamion()
+        FileManager.mapIdCam[truck.matricule] = truck
+
     if x == "F" :
-        SaisieLocation()
+        loc = SaisieLocation(FileManager.mapIdPers, FileManager.mapIdVoit, FileManager.mapIdMono, FileManager.mapIdUtil, FileManager.mapIdCam )
+        FileManager.mapIdLoc[loc.code] = loc
 
 #displayArray(mapIdPers)
 #displayArray(mapIdVoit)

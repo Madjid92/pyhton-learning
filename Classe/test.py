@@ -1,13 +1,21 @@
 
-from Voiture import Voiture
-maptest = {}
+import psycopg2
 
+# Connect to your postgres DB
+conn = psycopg2.connect(user="postgres",
+                        password="1992",
+                        host="127.0.0.1",
+                        port="5432",
+                        database="location")
 
-voit = Voiture('test','test','1990','AAA-BBBB', 170, 7)
+# Open a cursor to perform database operations
+cur = conn.cursor()
 
-maptest[voit.matricule]= voit
+# Execute a query
+cur.execute("SELECT * FROM public.voiture")
 
-print(maptest)
-print(maptest['AAA-BBBB'])
+# Retrieve query results
+#records = cur.fetchall()
 
-print(type(voit) == int)
+#for i in range(len(records)) :
+#   print(records[i])
