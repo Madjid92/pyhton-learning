@@ -61,23 +61,31 @@ def SaisieCamion():
     truck = Camion(nom,model,annee,matricule,km,tonnage)
     return truck
 
-def SaisieLocation(mapIdPers, mapIdVoit, mapIdMono, mapIdUtil, mapIdCam ):
+def SaisieLocation():
     code = input("Saisissez le code de la location: ")
-    client = ChoosePers(mapIdPers)
-    vehicule = ChooseCar(mapIdVoit, mapIdMono, mapIdUtil, mapIdCam )
+    client = ChoosePers()
+    vehicule = ChooseCar()
     loc = Location(code,client,vehicule)
     return loc
 
-def ChoosePers(mapIdPers):
+def ChoosePers():
     print("ID"+"\t"+"Nom"+"\t"+"Prénom"+"\t"+"Date de naissance"+"\n"+
     "..........................................................")
+    mapIdPers = FileManager.getAll(Personne)
     for i in mapIdPers:
         print(str(mapIdPers[i].id)+"\t"+mapIdPers[i].nom+"\t"+mapIdPers[i].prenom+"\t"+str(mapIdPers[i].naissance))
     client1 = input("Veuillez séléctionner l'ID du client: ")
     return mapIdPers[str(client1)]
 
-def ChooseCar(mapIdVoit, mapIdMono, mapIdUtil, mapIdCam):
-    mapIdVehic = { **mapIdVoit, **mapIdMono, **mapIdUtil, **mapIdCam}
+def ChooseCar():
+    mapIdVoit = FileManager.getAll(Voiture)
+    mapIdMono = FileManager.getAll(Monospace)
+    mapIdUtil = FileManager.getAll(Utilitaire)
+    mapIdCam = FileManager.getAll(Camion)
+    mapIdVehic = { **FileManager.getAll(Voiture), 
+                  **FileManager.getAll(Monospace),
+                **FileManager.getAll(Utilitaire),
+                      **FileManager.getAll(Camion)}
     print("Les voitures disponibles à la location: "+"\n"+"Marque"+"\t"+"model"+"\t"+"Année"+"\t"+"Matricule"+"\t"+"Kilométrage"+"\t"+"Nbr places"+"\n"+
     "..............................................................................................")
     for i in mapIdVoit:
@@ -128,10 +136,11 @@ def Saiasie( x) :
     if x == "E":
         return SaisieCamion()
     if x == "F" :
-        return SaisieLocation(FileManager.mapIdPers, FileManager.mapIdVoit, FileManager.mapIdMono, FileManager.mapIdUtil, FileManager.mapIdCam )
-    
+        return SaisieLocation()
+
+FileManager.init()
+
 while True:
-    FileManager.getAll()
     displayMsg()
     x = input("Veuillez faire votre saisie, ou ok pour quitter: ")
     if x == "ok":

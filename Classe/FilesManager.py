@@ -106,8 +106,8 @@ class FileManager(DataManager) :
         mapIdVehic = { **FileManager.mapIdVoit, **FileManager.mapIdMono, **FileManager.mapIdUtil, **FileManager.mapIdCam}
         if len(FileManager.mapIdPers)!=0 and len(mapIdVehic)!=0:
             return True
-
-    def getAll() :
+        
+    def init():
         FileManager.existFile("personne.txt")
         FileManager.existFile("voiture.txt")
         FileManager.existFile("monospace.txt")
@@ -115,6 +115,10 @@ class FileManager(DataManager) :
         FileManager.existFile("camion.txt")
 
         FileManager.loadLocation()
+
+    def getAll(dataType) :
+        return FileManager.typetoMap[dataType]
+    
 
     def saveAll():
         FileManager.saveOnFile("personne.txt",FileManager.mapIdPers)
@@ -130,6 +134,9 @@ class FileManager(DataManager) :
         idVal = getattr(data, idattrName)
         dataMap = FileManager.typetoMap[typeData]
         dataMap[idVal] = data
-        
+    
+    def getById(id, dataType):   
+        data = FileManager.typetoMap[dataType][id]
+        return data
         
 
