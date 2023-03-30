@@ -10,7 +10,7 @@ from Serialize import Serialize
 from datetime import datetime
 import os
 from FilesManager import FileManager
-
+from DBManager import DBManager
 
 def displayArray(map:dict) :
     for i in  map:
@@ -71,21 +71,21 @@ def SaisieLocation():
 def ChoosePers():
     print("ID"+"\t"+"Nom"+"\t"+"Prénom"+"\t"+"Date de naissance"+"\n"+
     "..........................................................")
-    mapIdPers = FileManager.getAll(Personne)
+    mapIdPers = DBManager.getAll(Personne)
     for i in mapIdPers:
         print(str(mapIdPers[i].id)+"\t"+mapIdPers[i].nom+"\t"+mapIdPers[i].prenom+"\t"+str(mapIdPers[i].naissance))
     client1 = input("Veuillez séléctionner l'ID du client: ")
     return mapIdPers[str(client1)]
 
 def ChooseCar():
-    mapIdVoit = FileManager.getAll(Voiture)
-    mapIdMono = FileManager.getAll(Monospace)
-    mapIdUtil = FileManager.getAll(Utilitaire)
-    mapIdCam = FileManager.getAll(Camion)
-    mapIdVehic = { **FileManager.getAll(Voiture), 
-                  **FileManager.getAll(Monospace),
-                **FileManager.getAll(Utilitaire),
-                      **FileManager.getAll(Camion)}
+    mapIdVoit = DBManager.getAll(Voiture)
+    mapIdMono = DBManager.getAll(Monospace)
+    mapIdUtil = DBManager.getAll(Utilitaire)
+    mapIdCam = DBManager.getAll(Camion)
+    mapIdVehic = { **DBManager.getAll(Voiture), 
+                  **DBManager.getAll(Monospace),
+                **DBManager.getAll(Utilitaire),
+                      **DBManager.getAll(Camion)}
     print("Les voitures disponibles à la location: "+"\n"+"Marque"+"\t"+"model"+"\t"+"Année"+"\t"+"Matricule"+"\t"+"Kilométrage"+"\t"+"Nbr places"+"\n"+
     "..............................................................................................")
     for i in mapIdVoit:
@@ -118,9 +118,10 @@ def displayMsg():
     print("Saisissez A pour ajouter un client."+"\n"+"Saisissez B pour ajouter une voiture."+"\n"+
             "Saisissez C pour ajouter un monospace."+"\n"+"Saisissez D pour ajouter un utilitaire."+"\n"+
             "Saisissez E pour ajouter un camion.")
+    """
     if  FileManager.checkLoc():
         print("Saisissez F pour ajouter une location.")       
-
+    """
 print("Bienvenue au menu d'enregistrement de l'agence  :")
 
 
@@ -138,22 +139,24 @@ def Saiasie( x) :
     if x == "F" :
         return SaisieLocation()
 
-FileManager.init()
+DBManager.init()
 
 while True:
     displayMsg()
     x = input("Veuillez faire votre saisie, ou ok pour quitter: ")
     if x == "ok":
-        FileManager.saveAll()
+        
         break
     if x != "A" and x != "B" and x != "C" and x != "D" and x != "E" and  x != "F":
         print("Votre choix n'est pas sur la liste !")
         continue
+    """
     if x == "F" and not FileManager.checkLoc() : 
         print("Votre choix n'est pas sur la liste !")
         continue
+    """
     data = Saiasie(x)
-    FileManager.save(data)
+    DBManager.save(data)
     
 
 #displayArray(mapIdPers)
