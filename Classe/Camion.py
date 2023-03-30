@@ -2,7 +2,7 @@ from Vehicule import Vehicule
 from Serialize import Serialize
 
 class Camion (Vehicule):
-    def __init__(self, nom, model, annee, matricule, km, tonnage):
+    def __init__(self, nom = "", model = "", annee = "", matricule = "", km = 0, tonnage  = 0):
         self.tonnage = tonnage
         super().__init__(nom, model, annee, matricule, km)
     def __str__(self):

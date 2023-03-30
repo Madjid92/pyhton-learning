@@ -3,7 +3,7 @@ from Serialize import Serialize
 class Personne(Serialize):
     count = 0
     name = "personne"
-    def __init__(self, nom : str, prenom :str, naissance : str):
+    def __init__(self, nom : str = '', prenom :str = '', naissance : str ='1-1-1900'):
         Personne.count = Personne.count+1
         self.id = Personne.count
         self.nom = nom

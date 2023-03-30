@@ -3,7 +3,7 @@ from Serialize import Serialize
 
 class Voiture (Vehicule):
     name="voiture"
-    def __init__(self, nom, model, annee, matricule, km, nbrplace):
+    def __init__(self, nom ="", model = "", annee = "", matricule = "", km = 0, nbrplace = 0):
         self.nbrplace = nbrplace
         super().__init__(nom, model, annee, matricule, km)
 

@@ -11,7 +11,7 @@ mapping = {
             "tableName": "personne",
             "mapping": [
                 {
-                  "colomnName" : "ID",
+                  "colomnName" : "id",
                   "type" : "int",
                   "attributName" : "id"
                 },

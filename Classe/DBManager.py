@@ -8,10 +8,10 @@ from Location import Location
 from DataManger import DataManager
 import psycopg2
 from OrmConfig import mapping
+from datetime import datetime
 
 class DBManager(DataManager) :
 
-    connection = None
     user="postgres"
     password="1992"
     host="127.0.0.1"
@@ -19,22 +19,18 @@ class DBManager(DataManager) :
     db_name= "location_2"
 
     classTotab = mapping
-
-    tableToClass = {} 
-
-    def createTableToClassMap() :
-        DBManager.tableToClass = {}
-        for curretKey, currentValue in DBManager.classTotab.items():
-            key = currentValue["tableName"]
-            value = {"classModel": curretKey,
-                     "mapping" : currentValue["mapping"]
-                    }
-            DBManager.tableToClass[key] = value
-
-
+    
+    def connect() :
+        return psycopg2.connect(user =DBManager.user,
+                            password = DBManager.password,
+                            host = DBManager.host,
+                            port = DBManager.port,
+                            database = DBManager.db_name)
+    
     def checkDB() :
+        connection = None
         try:
-            DBManager.connection = psycopg2.connect(user = DBManager.user,
+            connection = psycopg2.connect(user = DBManager.user,
                             password = DBManager.password,
                             host = DBManager.host,
                             port = DBManager.port)
@@ -42,32 +38,26 @@ class DBManager(DataManager) :
         except:
             print('Database not connected.')
 
-        if DBManager.connection is not None:
+        if connection is not None:
             #DBManager.connection.autocommit = True
-            cur = DBManager.connection.cursor()
+            cur = connection.cursor()
 
             cur.execute("SELECT datname FROM pg_database;")
 
             list_database = cur.fetchall()
-
+            connection.close()
             if (DBManager.db_name,) in list_database:
                 print("'{}' Database already exist".format(DBManager.db_name))
-                DBManager.connection.close()
-                DBManager.connection = psycopg2.connect(user =DBManager.user,
-                            password = DBManager.password,
-                            host = DBManager.host,
-                            port = DBManager.port,
-                            database = DBManager.db_name)
                 return True
             else:
                 print("'{}' Database not exist.".format(DBManager.db_name))
-                DBManager.connection.close()
-                DBManager.connection = None
                 return False
+           
+    
+
         
         
-        
-    def createAndConnectToDB() :
+    def createDB() :
         DBManager.connection = psycopg2.connect(user = DBManager.user,
                             password = DBManager.password,
                             host = DBManager.host,
@@ -78,12 +68,7 @@ class DBManager(DataManager) :
         cursor.execute(sql)
         print("Database location_2 created successfully........")
         DBManager.connection.close()
-        DBManager.connection = psycopg2.connect(database = DBManager.db_name,
-                            user = DBManager.user,
-                            password = DBManager.password,
-                            host = DBManager.host,
-                            port = DBManager.port)
-        return 
+        
     
     def dbStructureSqlBuild() :
         query = ""
@@ -96,43 +81,93 @@ class DBManager(DataManager) :
             query += ");\n"
         return query
         
-    
-        
     def init():
-        if(DBManager.connection != None):
-            return 
-        DBManager.createTableToClassMap()
         if(not DBManager.checkDB()) :
             # creat db and connect
-            DBManager.createAndConnectToDB()
+            DBManager.createDB()
+            connection = DBManager.connect()
             sqlQuery = DBManager.dbStructureSqlBuild()
-            DBManager.connection.autocommit = True
-            curs = DBManager.connection.cursor()
+            connection.autocommit = True
+            curs = connection.cursor()
             curs.execute(sqlQuery)
+            connection.close()
+
+    def generateSelectQuery(dataType):
+        query = "SELECT "
+        map = DBManager.classTotab[dataType]
+        
+        attributNames = ()
+        for value in map["mapping"]:
+            query += value["colomnName"]+","
+            attributNames += (value["attributName"],)
+        query = query[0:len(query)-1]
+        query += " from "+ map["tableName"]
+        return (query,attributNames)
+
+    def mapResult(resultat,attributList,dataType):
+        objects = []
+        for elm in resultat:
+            obj = dataType()
+            for i in range(len(elm)) :
+                setattr(obj,attributList[i],elm[i])
+            objects.append(obj)
+        return objects
+                
 
     def getAll(dataType):
-        return super().getAll()
+        selectResult = DBManager.generateSelectQuery(dataType)
+        selectQuery = selectResult[0]
+        connexion = DBManager.connect()
+        connexion.autocommit = True
+        curs = connexion.cursor()
+        curs.execute(selectQuery)
+        selection = curs.fetchall()
+        connexion.close()
+        return DBManager.mapResult(selection,selectResult[1],dataType)
+        
     
     def getById(id, dataType):
         return super().getById(dataType)
     
-    def save(data):
-        return super().save()
+    def generateInsertQuery(data):
+        mapData = mapping[type(data)]
+        if(mapData == None): 
+            raise "Not corresponding mapping for type"+ type(data)
+        insertQuery = "INSERT into "+mapData["tableName"]+" "
+        fields = "("
+        values = "("
+
+        for value in mapData["mapping"]:
+            fields+=value["colomnName"]+","
+            if value["type"] == "varchar" or value["type"] == "date":
+                values+="'"+str(getattr(data,value["attributName"]))+"'"+","
+            else:
+                values+=str(getattr(data,value["attributName"]))+","
     
+        fields= fields[0: len(fields)-1]+")"
+        values= values[0: len(values)-1]+")"
+        insertQuery+=fields+" values "+values
+        return insertQuery
+    
+    def save(data):
+        insertQuery = DBManager.generateInsertQuery(data)
+        connexion = DBManager.connect()
+        connexion.autocommit = True
+        curs = connexion.cursor()
+        curs.execute(insertQuery)
+        connexion.close()
+
     def saveAll():
         pass
 
-
 if __name__ == '__main__':
+    
+    per = Personne("test","test","10-10-1990")
+    per1 = Personne("test1","test1","11-11-1991")
     DBManager.init()
-    
-    
-
-    '''curs = connection.cursor()
-    # Execute a query
-    curs.execute("SELECT * FROM public.personne where personne.id = 1")
-
-    # Retrieve query results
-    records = curs.fetchall()
-    for i in range(len(records)) :
-        print(records[i])'''
+    DBManager.save(per)
+    DBManager.save(per1)
+    pers = DBManager.getAll(Personne)
+    for p in pers:
+        print(p)
+    #print(DBManager.getAll(Personne))
