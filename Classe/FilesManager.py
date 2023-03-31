@@ -101,11 +101,6 @@ class FileManager(DataManager) :
             for i in map:
                 f.write(map[i].stringify())
             f.close() 
-
-    def checkLoc():
-        mapIdVehic = { **FileManager.mapIdVoit, **FileManager.mapIdMono, **FileManager.mapIdUtil, **FileManager.mapIdCam}
-        if len(FileManager.mapIdPers)!=0 and len(mapIdVehic)!=0:
-            return True
         
     def init():
         FileManager.existFile("personne.txt")

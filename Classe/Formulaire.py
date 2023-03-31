@@ -12,6 +12,25 @@ import os
 from FilesManager import FileManager
 from DBManager import DBManager
 
+def checkLocation(manager):
+    if manager == FileManager:
+        mapIdVehic = { **FileManager.mapIdVoit, **FileManager.mapIdMono, **FileManager.mapIdUtil, **FileManager.mapIdCam}
+        if len(FileManager.mapIdPers)!=0 and len(mapIdVehic)!=0:
+            return True
+        else:
+            return False
+    if manager == DBManager:
+        pers = DBManager.getAll(Personne)
+        voits = DBManager.getAll(Voiture)
+        utils = DBManager.getAll(Utilitaire)
+        monos = DBManager.getAll(Monospace)
+        cams = DBManager.getAll(Camion)
+        listVehic = voits + utils + monos + cams
+        if len(pers)!=0 and len(listVehic)!=0:
+            return True
+        else:
+            return False
+
 def displayArray(map:dict) :
     for i in  map:
         print(map[i])
@@ -118,10 +137,10 @@ def displayMsg():
     print("Saisissez A pour ajouter un client."+"\n"+"Saisissez B pour ajouter une voiture."+"\n"+
             "Saisissez C pour ajouter un monospace."+"\n"+"Saisissez D pour ajouter un utilitaire."+"\n"+
             "Saisissez E pour ajouter un camion.")
-    """
-    if  FileManager.checkLoc():
+    
+    if  checkLocation(DBManager):
         print("Saisissez F pour ajouter une location.")       
-    """
+    
 print("Bienvenue au menu d'enregistrement de l'agence  :")
 
 
@@ -150,11 +169,11 @@ while True:
     if x != "A" and x != "B" and x != "C" and x != "D" and x != "E" and  x != "F":
         print("Votre choix n'est pas sur la liste !")
         continue
-    """
-    if x == "F" and not FileManager.checkLoc() : 
+    
+    if x == "F" and not checkLocation(DBManager) : 
         print("Votre choix n'est pas sur la liste !")
         continue
-    """
+    
     data = Saiasie(x)
     DBManager.save(data)
     
