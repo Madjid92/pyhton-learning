@@ -12,6 +12,8 @@ import os
 from FilesManager import FileManager
 from DBManager import DBManager
 
+Manager  = FileManager
+
 def checkLocation(manager):
     if manager == FileManager:
         mapIdVehic = { **FileManager.mapIdVoit, **FileManager.mapIdMono, **FileManager.mapIdUtil, **FileManager.mapIdCam}
@@ -90,21 +92,19 @@ def SaisieLocation():
 def ChoosePers():
     print("ID"+"\t"+"Nom"+"\t"+"Prénom"+"\t"+"Date de naissance"+"\n"+
     "..........................................................")
-    mapIdPers = DBManager.getAll(Personne)
+    mapIdPers = Manager.getAll(Personne)
     for i in mapIdPers:
         print(str(mapIdPers[i].id)+"\t"+mapIdPers[i].nom+"\t"+mapIdPers[i].prenom+"\t"+str(mapIdPers[i].naissance))
     client1 = input("Veuillez séléctionner l'ID du client: ")
     return mapIdPers[str(client1)]
 
 def ChooseCar():
-    mapIdVoit = DBManager.getAll(Voiture)
-    mapIdMono = DBManager.getAll(Monospace)
-    mapIdUtil = DBManager.getAll(Utilitaire)
-    mapIdCam = DBManager.getAll(Camion)
-    mapIdVehic = { **DBManager.getAll(Voiture), 
-                  **DBManager.getAll(Monospace),
-                **DBManager.getAll(Utilitaire),
-                      **DBManager.getAll(Camion)}
+    mapIdVoit = Manager.getAll(Voiture)
+    mapIdMono = Manager.getAll(Monospace)
+    mapIdUtil = Manager.getAll(Utilitaire)
+    mapIdCam = Manager.getAll(Camion)
+    mapIdVehic = mapIdCam + mapIdVoit + mapIdUtil + mapIdMono if mapIdCam == type(list) else { **mapIdCam,  **mapIdVoit, **mapIdUtil, **mapIdMono}
+   
     print("Les voitures disponibles à la location: "+"\n"+"Marque"+"\t"+"model"+"\t"+"Année"+"\t"+"Matricule"+"\t"+"Kilométrage"+"\t"+"Nbr places"+"\n"+
     "..............................................................................................")
     for i in mapIdVoit:
@@ -138,7 +138,7 @@ def displayMsg():
             "Saisissez C pour ajouter un monospace."+"\n"+"Saisissez D pour ajouter un utilitaire."+"\n"+
             "Saisissez E pour ajouter un camion.")
     
-    if  checkLocation(DBManager):
+    if  checkLocation(Manager):
         print("Saisissez F pour ajouter une location.")       
     
 print("Bienvenue au menu d'enregistrement de l'agence  :")
@@ -158,24 +158,24 @@ def Saiasie( x) :
     if x == "F" :
         return SaisieLocation()
 
-DBManager.init()
+Manager.init()
 
 while True:
     displayMsg()
     x = input("Veuillez faire votre saisie, ou ok pour quitter: ")
     if x == "ok":
-        
+        Manager.saveAll()
         break
     if x != "A" and x != "B" and x != "C" and x != "D" and x != "E" and  x != "F":
         print("Votre choix n'est pas sur la liste !")
         continue
     
-    if x == "F" and not checkLocation(DBManager) : 
+    if x == "F" and not checkLocation(Manager) : 
         print("Votre choix n'est pas sur la liste !")
         continue
     
     data = Saiasie(x)
-    DBManager.save(data)
+    Manager.save(data)
     
 
 #displayArray(mapIdPers)
