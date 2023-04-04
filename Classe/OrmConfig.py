@@ -183,12 +183,12 @@ mapping = {
                 {
                 "colomnName" : "client",
                 "type" : "int",
-                "attributName" : "client"
+                "attributName" : "client.id"
                 },
                 {
                 "colomnName" : "vehicule",
                 "type" : "varchar",
-                "attributName" : "vehicule"
+                "attributName" : "vehicule.matricule"
                 }
             ]
         }

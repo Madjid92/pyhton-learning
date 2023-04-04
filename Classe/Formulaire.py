@@ -11,8 +11,10 @@ from datetime import datetime
 import os
 from FilesManager import FileManager
 from DBManager import DBManager
+import functools
 
-Manager  = FileManager
+
+Manager  = DBManager
 
 def checkLocation(manager):
     if manager == FileManager:
@@ -89,22 +91,46 @@ def SaisieLocation():
     loc = Location(code,client,vehicule)
     return loc
 
+def reducePers(accum, currectElement):
+     accum[str(currectElement.id)]= currectElement
+     return accum
+
+def reduceVehic(accum, currectElement):
+     accum[str(currectElement.matricule)]= currectElement
+     return accum
+
 def ChoosePers():
     print("ID"+"\t"+"Nom"+"\t"+"Prénom"+"\t"+"Date de naissance"+"\n"+
     "..........................................................")
     mapIdPers = Manager.getAll(Personne)
+    if (type(mapIdPers) == type([])):
+        mapIdPers = functools.reduce(reducePers, mapIdPers,{})
     for i in mapIdPers:
         print(str(mapIdPers[i].id)+"\t"+mapIdPers[i].nom+"\t"+mapIdPers[i].prenom+"\t"+str(mapIdPers[i].naissance))
     client1 = input("Veuillez séléctionner l'ID du client: ")
     return mapIdPers[str(client1)]
 
 def ChooseCar():
-    mapIdVoit = Manager.getAll(Voiture)
+    mapIdVoit =  Manager.getAll(Voiture)
     mapIdMono = Manager.getAll(Monospace)
     mapIdUtil = Manager.getAll(Utilitaire)
     mapIdCam = Manager.getAll(Camion)
-    mapIdVehic = mapIdCam + mapIdVoit + mapIdUtil + mapIdMono if mapIdCam == type(list) else { **mapIdCam,  **mapIdVoit, **mapIdUtil, **mapIdMono}
+
+    if (type(mapIdVoit) == type([])):
+        mapIdVoit = functools.reduce(reduceVehic, mapIdVoit,{})
+    
+    if (type(mapIdMono) == type([])):
+        mapIdMono = functools.reduce(reduceVehic, mapIdMono,{})
+
+    if (type(mapIdUtil) == type([])):
+        mapIdUtil = functools.reduce(reduceVehic, mapIdUtil,{})
+
+    if (type(mapIdCam) == type([])):
+        mapIdCam = functools.reduce(reduceVehic, mapIdCam,{})
+  
+    mapIdVehic =  { **mapIdCam,  **mapIdVoit, **mapIdUtil, **mapIdMono}
    
+    
     print("Les voitures disponibles à la location: "+"\n"+"Marque"+"\t"+"model"+"\t"+"Année"+"\t"+"Matricule"+"\t"+"Kilométrage"+"\t"+"Nbr places"+"\n"+
     "..............................................................................................")
     for i in mapIdVoit:
@@ -176,7 +202,7 @@ while True:
     
     data = Saiasie(x)
     Manager.save(data)
-    
+
 
 #displayArray(mapIdPers)
 #displayArray(mapIdVoit)

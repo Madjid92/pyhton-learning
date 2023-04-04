@@ -128,6 +128,8 @@ class DBManager(DataManager) :
     
     def getById(id, dataType):
         return super().getById(dataType)
+
+    
     
     def generateInsertQuery(data):
         mapData = mapping[type(data)]
@@ -136,19 +138,28 @@ class DBManager(DataManager) :
         insertQuery = "INSERT into "+mapData["tableName"]+" "
         fields = "("
         values = "("
-
+        #attributSplit = []
         for value in mapData["mapping"]:
+            currentdata = data
             fields+=value["colomnName"]+","
+            attribut:str = value["attributName"]
+            p = "."
+            if p in attribut :
+                attributSplit = attribut.split(p)
+                #attributSplit.append(attribut)
+                currentdata = getattr(data,attributSplit[0])
+                attribut = attributSplit[1]
             if value["type"] == "varchar" or value["type"] == "date":
-                values+="'"+str(getattr(data,value["attributName"]))+"'"+","
+                values+="'"+str(getattr(currentdata,attribut))+"'"+","
             else:
-                values+=str(getattr(data,value["attributName"]))+","
+                values+=str(getattr(currentdata,attribut))+","
+
     
         fields= fields[0: len(fields)-1]+")"
         values= values[0: len(values)-1]+")"
         insertQuery+=fields+" values "+values
         return insertQuery
-    
+   
     def save(data):
         insertQuery = DBManager.generateInsertQuery(data)
         connexion = DBManager.connect()
@@ -164,10 +175,12 @@ if __name__ == '__main__':
     
     per = Personne("test","test","10-10-1990")
     per1 = Personne("test1","test1","11-11-1991")
+    voit = Voiture("renault","twingo",2010,"sdfghjk",10000,4)
+    loc = Location("qsqs",per,voit)
     DBManager.init()
-    DBManager.save(per)
-    DBManager.save(per1)
-    pers = DBManager.getAll(Personne)
-    for p in pers:
-        print(p)
+    DBManager.save()
+    #DBManager.save(per1)
+    #pers = DBManager.getAll(Personne)
+    #for p in pers:
+        #print(p)
     #print(DBManager.getAll(Personne))
